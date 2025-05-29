@@ -10,14 +10,14 @@ import os # For potentially reading connection details from environment variable
 # DB_SERVER = os.getenv("DB_SERVER", "your_server_name_or_ip")
 # DB_PORT = os.getenv("DB_PORT", "1433") # Default MS SQL Server port
 # DB_NAME = os.getenv("DB_NAME", "your_database_name")
-# ODBC_DRIVER = os.getenv("ODBC_DRIVER", "ODBC+Driver+17+for+SQL+Server") # Ensure this driver is installed
+# ODBC_DRIVER = os.getenv("ODBC_DRIVER", "ODBC+Driver+18+for+SQL+Server") # Ensure this driver is installed
 
 # SQLALCHEMY_DATABASE_URL = f"mssql+pyodbc://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}:{DB_PORT}/{DB_NAME}?driver={ODBC_DRIVER}"
 
 # Placeholder connection string - REPLACE THIS
-SQLALCHEMY_DATABASE_URL = "mssql+pyodbc://<USER>:<PASSWORD>@<SERVER_NAME_OR_IP>:<PORT>/<DATABASE_NAME>?driver=ODBC+Driver+17+for+SQL+Server"
+SQLALCHEMY_DATABASE_URL = "mssql+pyodbc://<USER>:<PASSWORD>@<SERVER_NAME_OR_IP>:<PORT>/<DATABASE_NAME>?driver=ODBC+Driver+18+for+SQL+Server"
 # Example for a local SQL Express instance with Windows Authentication:
-# SQLALCHEMY_DATABASE_URL = "mssql+pyodbc://localhost\\SQLEXPRESS/MyMetricsDB?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
+# SQLALCHEMY_DATABASE_URL = "mssql+pyodbc://localhost\\SQLEXPRESS/MyMetricsDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=yes"
 
 
 engine = create_engine(
