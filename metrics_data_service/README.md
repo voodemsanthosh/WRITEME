@@ -48,10 +48,33 @@ metrics_data_service/
 5.  **Access API documentation:**
     Navigate to `http://127.0.0.1:8000/docs` in your browser to see the Swagger UI documentation.
 
-## Database
+## Database Configuration
 
-The service is currently configured to use a SQLite database (`./metrics.db`), which will be created automatically when the application starts.
-To use a different database (e.g., PostgreSQL), update the `SQLALCHEMY_DATABASE_URL` in `app/database.py` and install the appropriate database driver (e.g., `psycopg2-binary`).
+The service is configured to connect to a Microsoft SQL Server database. Connection details must be provided via environment variables. The application will not start if the required variables are missing.
+
+### Environment Variables
+
+The following environment variables are used to configure the database connection:
+
+*   `DB_SERVER`: **(Required)** The hostname or IP address of your MS SQL Server instance.
+*   `DB_NAME`: **(Required)** The name of the database to connect to.
+*   `DB_USER`: **(Required)** The username for database authentication.
+*   `DB_PASSWORD`: **(Required)** The password for database authentication.
+*   `DB_PORT`: (Optional) The port number for the MS SQL Server instance. Defaults to `1433` if not set.
+*   `DB_DRIVER`: (Optional) The ODBC driver string that pyodbc should use. Defaults to `"ODBC Driver 18 for SQL Server"` if not set. Ensure the specified driver is installed in the environment where the application runs (e.g., within the Docker container).
+
+For example, when running locally or with Docker:
+```bash
+export DB_SERVER="your_sql_server_host"
+export DB_NAME="your_database_name"
+export DB_USER="your_username"
+export DB_PASSWORD="your_secret_password"
+# export DB_PORT="1433" # Optional
+# export DB_DRIVER="ODBC Driver 18 for SQL Server" # Optional
+uvicorn main:app --reload
+```
+
+The `Dockerfile` provided with this service installs "ODBC Driver 18 for SQL Server". If you use a different driver, ensure it's correctly installed and update the `DB_DRIVER` environment variable accordingly.
 
 ## API Endpoints
 

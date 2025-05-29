@@ -1,12 +1,28 @@
 import unittest
 from unittest.mock import MagicMock, patch
+import os
 
-# Assuming pytest is run from the 'metrics_data_service' directory
+# Define and apply mock environment variables BEFORE src imports
+# This is crucial because src.models (imported by src.crud) imports src.database,
+# which checks environment variables upon its module load.
+MOCK_DB_ENV = {
+    "DB_SERVER": "test_server_crud", # Use different values to distinguish if needed
+    "DB_NAME": "test_db_crud",
+    "DB_USER": "test_user_crud",
+    "DB_PASSWORD": "test_password_crud"
+}
+# Apply the patch globally for this module.
+# For more complex scenarios, setUpModule/tearDownModule with patcher.start/stop might be used.
+os.environ.update(MOCK_DB_ENV)
+
+# Now, import modules from 'src'. These will see the patched environment.
 from src.crud import get_metrics
-from src.models import Metric as SQLModelMetric # Alias to avoid Pydantic/SQLModel name clash if any
-from src.schemas import Metric as PydanticMetric # For creating test data
+from src.models import Metric as SQLModelMetric
+from src.schemas import Metric as PydanticMetric
 
 class TestCrudOperations(unittest.TestCase):
+    # No need to patch os.environ again here if done globally for the module,
+    # or if using setUpModule with patcher.start().
 
     def test_get_metrics_empty(self):
         """Test get_metrics when the database returns no metrics."""

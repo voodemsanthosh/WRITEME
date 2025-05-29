@@ -5,6 +5,17 @@ FROM python:3.9-alpine
 ENV ACCEPT_EULA=Y \
     LANG=C.UTF-8
 
+# --- Application Environment Variables ---
+# Database connection details.
+# These are placeholders and should be overridden at runtime with actual deployment values.
+# Refer to README.md for more details on these variables.
+ENV DB_SERVER="your_sql_server_host"
+ENV DB_NAME="your_database_name"
+ENV DB_USER="your_db_user"
+ENV DB_PASSWORD="" # IMPORTANT: This is sensitive and MUST be overridden at runtime. Do not commit default passwords.
+ENV DB_PORT="1433"
+ENV DB_DRIVER="ODBC Driver 18 for SQL Server" # Ensure this driver is installed in the image.
+
 # Install system dependencies required for MS ODBC Driver 18 on Alpine
 RUN apk add --no-cache --virtual .build-deps curl gnupg \
     && apk add --no-cache unixodbc libstdc++ \
