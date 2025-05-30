@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
+from urllib.parse import quote_plus # Added for URL encoding credentials
 
 # --- Database Configuration from Environment Variables ---
 # The application expects the following environment variables to be set for DB connection:
@@ -13,32 +14,36 @@ import os
 # - DB_DRIVER:  The ODBC driver string. (Optional, defaults to "ODBC Driver 18 for SQL Server")
 #               Ensure the specified driver is installed in the environment.
 
-DB_SERVER = os.getenv("DB_SERVER")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
+raw_db_server = os.getenv("DB_SERVER")
+raw_db_name = os.getenv("DB_NAME")
+raw_db_user = os.getenv("DB_USER")
+raw_db_password = os.getenv("DB_PASSWORD")
 
 # Check for required environment variables
 required_env_vars = {
-    "DB_SERVER": DB_SERVER,
-    "DB_NAME": DB_NAME,
-    "DB_USER": DB_USER,
-    "DB_PASSWORD": DB_PASSWORD,
+    "DB_SERVER": raw_db_server,
+    "DB_NAME": raw_db_name,
+    "DB_USER": raw_db_user,
+    "DB_PASSWORD": raw_db_password,
 }
 
 missing_vars = [key for key, value in required_env_vars.items() if value is None]
 if missing_vars:
     raise ValueError(f"Missing required environment variables for database connection: {', '.join(missing_vars)}")
 
+# URL-encode username and password
+encoded_db_user = quote_plus(raw_db_user)
+encoded_db_password = quote_plus(raw_db_password)
+
 # Optional environment variables with defaults
-DB_PORT = os.getenv("DB_PORT", "1433")
+db_port = os.getenv("DB_PORT", "1433")
 # Spaces in the driver string must be replaced with '+' for the connection URL
-DB_DRIVER_STRING = os.getenv("DB_DRIVER", "ODBC Driver 18 for SQL Server").replace(' ', '+')
+db_driver_string = os.getenv("DB_DRIVER", "ODBC Driver 18 for SQL Server").replace(' ', '+')
 
 
-# Construct the SQLAlchemy Database URL
+# Construct the SQLAlchemy Database URL using encoded credentials
 SQLALCHEMY_DATABASE_URL = \
-    f"mssql+pyodbc://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}:{DB_PORT}/{DB_NAME}?driver={DB_DRIVER_STRING}"
+    f"mssql+pyodbc://{encoded_db_user}:{encoded_db_password}@{raw_db_server}:{db_port}/{raw_db_name}?driver={db_driver_string}"
 
 # --- SQLAlchemy Engine and Session Setup ---
 engine = create_engine(
